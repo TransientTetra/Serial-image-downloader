@@ -16,21 +16,29 @@ import requests
 
 #checking for cli arguments
 if (len(sys.argv) == 1 or sys.argv[1] == "-h" or sys.argv[1] == "--help"):
-	text = "This is a webcomic downloader script, type the website url of the comic you wish to download as a cli parameter\nUsage: ./main.py [WEBSITE URL]\nIf you want to know about the version of this program use '-v'"
+	text = "This is a webcomic downloader script, type the website url of the comic you wish to download as a cli parameter\nUsage:\n./main.py [WEBSITE URL]\n./main.py -d/--dir/--directory [DIR TO SAVE] [WEBSITE URL]\nIf you want to know about the version of this program use '-v'"
 	print text
 elif (sys.argv[1] == "-v" or sys.argv[1] == "--version"):
-	text = "Webcomic downloader version 0.1; This piece of software was written by msperkowski it cannot be run, published, used, compiled, interpreted, edited, copied or shared in any form without owner's permission.\nFor more look at msperkowski@github.com"
+	text = "Webcomic downloader version 0.2; This piece of software was written by msperkowski it cannot be run, published, used, compiled, interpreted, edited, copied or shared in any form without owner's permission.\nFor more look at msperkowski@github.com"
 	print text
 else:
-	#making directory for saved comics
-	dir = os.path.dirname(os.path.abspath(__file__))
-	downloadDirectory = dir +"/comics"
+	if (sys.argv[1] == "-d" or sys.argv[1] == "--dir" or sys.argv[1] == "directory"):
+		dir = sys.argv[2]
+		if not os.path.exists(dir):
+			print ("Specified directory doesn't exist. Quitting")
+		searchedURL = sys.argv[3]
+	else:
+		#making directory for saved comics
+		dir = os.path.dirname(os.path.abspath(__file__))
 
+		#getting website url
+		searchedURL = sys.argv[1]
+
+	downloadDirectory = dir +"/comics"
 	if not os.path.exists(downloadDirectory):
 		os.makedirs(downloadDirectory)
-
-	#getting website url
-	searchedURL = sys.argv[1]
+	if not "http" in searchedURL:
+		searchedURL = "http://" + searchedURL
 
 	#making websites directory
 	currentDirectory = downloadDirectory + '/' + searchedURL.split('/')[2]
@@ -50,8 +58,6 @@ else:
 			#checking if given site exists
 			currentURL = searchedURL + str(currentPageNumber)
 			if urllib.urlopen(currentURL).getcode() != 200:
-				print currentURL
-				print "not 200"
 				#checking if current site doesn't exist if the next one exists
 				if urllib.urlopen(searchedURL + str(currentPageNumber + 1)).getcode() != 200:
 					break
@@ -61,7 +67,7 @@ else:
 
 			os.makedirs(pageDir)
 			#here downloading
-			pageName = searchedURL.split('/')[2].split('.')[-1]
+			pageName = searchedURL.split('/')[-2]
 			text = "Downloading " + currentURL
 			print (text)
 			urlResponse = urllib.urlopen(currentURL).read()
@@ -75,7 +81,7 @@ else:
 							if imageLink[1] == '/':
 								imageLink = "http:" + imageLink
 							else:
-								imageLink = searchedURL + imageLink
+								imageLink = "http://" + pageName + imageLink
 						filename = imageLink.split('/')[-1]
 						path = os.path.join(pageDir, filename)
 						if fileExt == "gif":
@@ -84,7 +90,7 @@ else:
 							try:
 								openImage = urllib.urlopen(imageLink)
 								imageData = openImage.read()
-							except UnicodeError:
+							except (UnicodeError, IOError):
 								continue
 						with open (path,"wb") as data:
 							data.write(imageData)
