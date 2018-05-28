@@ -5,7 +5,6 @@ A program to download images from a website with regular numeric subpages, ie. x
 (this is not an exhaustive list, just those that are confirmed)  
 -xkcd.com  
 -kuvaton.com  
--doodleforfood.com  
 -drmcninja.com  
 -gunnerkrigg.com  
 -hiagb.com  
