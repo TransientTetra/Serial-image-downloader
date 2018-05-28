@@ -13,13 +13,15 @@ import sys
 from bs4 import BeautifulSoup
 import urllib
 import requests
+import filecmp
+import shutil
 
 #checking for cli arguments
 if (len(sys.argv) == 1 or sys.argv[1] == "-h" or sys.argv[1] == "--help"):
 	text = "This is a webcomic downloader script, type the website url of the comic you wish to download as a cli parameter\nUsage:\n./main.py [WEBSITE URL]\n./main.py -d/--dir/--directory [DIR TO SAVE] [WEBSITE URL]\nIf you want to know about the version of this program use '-v'"
 	print text
 elif (sys.argv[1] == "-v" or sys.argv[1] == "--version"):
-	text = "Webcomic downloader version 0.2; This piece of software was written by msperkowski it cannot be run, published, used, compiled, interpreted, edited, copied or shared in any form without owner's permission.\nFor more look at msperkowski@github.com"
+	text = "Webcomic downloader version 0.3; This piece of software was written by msperkowski it cannot be run, published, used, compiled, interpreted, edited, copied or shared in any form without owner's permission.\nFor more look at msperkowski@github.com"
 	print text
 else:
 	if (sys.argv[1] == "-d" or sys.argv[1] == "--dir" or sys.argv[1] == "directory"):
@@ -50,21 +52,20 @@ else:
 	currentPageNumber = 1;
 
 	while 1:
+		currentURL = searchedURL + str(currentPageNumber)
 		#here check if exists in folder
 		pageDir = currentDirectory + '/' + str(currentPageNumber)
 		if os.path.exists(pageDir):
 			print (str(currentPageNumber) + " has already been downloaded")
+		#checking if given site exists
+		elif urllib.urlopen(currentURL).getcode() != 200:
+			#checking if current site doesn't exist if the next one exists
+			if urllib.urlopen(searchedURL + str(currentPageNumber + 1)).getcode() != 200:
+				break
+			else:
+				currentPageNumber += 1
+				continue
 		else:
-			#checking if given site exists
-			currentURL = searchedURL + str(currentPageNumber)
-			if urllib.urlopen(currentURL).getcode() != 200:
-				#checking if current site doesn't exist if the next one exists
-				if urllib.urlopen(searchedURL + str(currentPageNumber + 1)).getcode() != 200:
-					break
-				else:
-					currentPageNumber += 1
-					continue
-
 			os.makedirs(pageDir)
 			#here downloading
 			pageName = searchedURL.split('/')[-2]
@@ -95,6 +96,13 @@ else:
 						with open (path,"wb") as data:
 							data.write(imageData)
 			print ("Finished downloading " + currentURL)
+		#checking if downloaded page is not the same as previous one
+		previousPageDir = currentDirectory + '/' + str(currentPageNumber - 1)
+		if os.path.exists(previousPageDir):
+			dirCmp = filecmp.dircmp(pageDir, previousPageDir)
+			if dirCmp.left_list == dirCmp.right_list:
+				shutil.rmtree(pageDir)
+				break
 		currentPageNumber += 1
-
+				
 	print ("Completed downloading from " + searchedURL)
