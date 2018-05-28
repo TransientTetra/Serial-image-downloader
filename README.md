@@ -8,3 +8,5 @@ A program to download images from a website with regular numeric subpages, ie. x
 -doodleforfood.com  
 -drmcninja.com  
 -gunnerkrigg.com  
+-hiagb.com  
+-gunshowcomic.com
