@@ -21,7 +21,7 @@ if (len(sys.argv) == 1 or sys.argv[1] == "-h" or sys.argv[1] == "--help"):
 	text = "This is a webcomic downloader script, type the website url of the comic you wish to download as a cli parameter\nUsage:\n./main.py [WEBSITE URL]\n./main.py -d/--dir/--directory [DIR TO SAVE] [WEBSITE URL]\nIf you want to know about the version of this program use '-v'"
 	print text
 elif (sys.argv[1] == "-v" or sys.argv[1] == "--version"):
-	text = "Webcomic downloader version 0.4a; This piece of software was written by msperkowski it cannot be run, published, used, compiled, interpreted, edited, copied or shared in any form without owner's permission.\nFor more look at msperkowski@github.com"
+	text = "Webcomic downloader version 0.4b; This piece of software was written by msperkowski it cannot be run, published, used, compiled, interpreted, edited, copied or shared in any form without owner's permission.\nFor more look at msperkowski@github.com"
 	print text
 else:
 	if (sys.argv[1] == "-d" or sys.argv[1] == "--dir" or sys.argv[1] == "directory"):
@@ -89,6 +89,7 @@ else:
 								imageLink = "http://" + pageName + imageLink
 						elif not pageName in imageLink:
 							imageLink = "http://" + pageName + '/' + imageLink
+						print imageLink
 						filename = imageLink.split('/')[-1]
 						path = os.path.join(pageDir, filename)
 						if fileExt == "gif":
@@ -110,8 +111,12 @@ else:
 		if os.path.exists(previousPageDir):
 			dirCmp = filecmp.dircmp(pageDir, previousPageDir)
 			if dirCmp.left_list == dirCmp.right_list:
-				shutil.rmtree(pageDir)
-				break
+				pprevPageDir = currentDirectory + '/' + str(currentPageNumber - 2)
+				if os.path.exists(pprevPageDir):
+					pDirCmp = filecmp.dircmp(pageDir, pprevPageDir)
+					if pDirCmp.left_list == pDirCmp.right_list:
+						shutil.rmtree(pageDir)
+						break
 		currentPageNumber += 1
 				
 	print ("Completed downloading from " + searchedURL)
