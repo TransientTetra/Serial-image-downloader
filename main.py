@@ -21,13 +21,14 @@ if (len(sys.argv) == 1 or sys.argv[1] == "-h" or sys.argv[1] == "--help"):
 	text = "This is a webcomic downloader script, type the website url of the comic you wish to download as a cli parameter\nUsage:\n./main.py [WEBSITE URL]\n./main.py -d/--dir/--directory [DIR TO SAVE] [WEBSITE URL]\nIf you want to know about the version of this program use '-v'"
 	print text
 elif (sys.argv[1] == "-v" or sys.argv[1] == "--version"):
-	text = "Webcomic downloader version 0.4; This piece of software was written by msperkowski it cannot be run, published, used, compiled, interpreted, edited, copied or shared in any form without owner's permission.\nFor more look at msperkowski@github.com"
+	text = "Webcomic downloader version 0.4a; This piece of software was written by msperkowski it cannot be run, published, used, compiled, interpreted, edited, copied or shared in any form without owner's permission.\nFor more look at msperkowski@github.com"
 	print text
 else:
 	if (sys.argv[1] == "-d" or sys.argv[1] == "--dir" or sys.argv[1] == "directory"):
 		dir = sys.argv[2]
 		if not os.path.exists(dir):
 			print ("Specified directory doesn't exist. Quitting")
+			quit()
 		searchedURL = sys.argv[3]
 	else:
 		#making directory for saved comics
@@ -69,6 +70,8 @@ else:
 			os.makedirs(pageDir)
 			#here downloading
 			pageName = searchedURL.split('/')[-2]
+			if "www." in pageName:
+				pageName = pageName.split("www.")[1]
 			text = "Downloading " + currentURL
 			print (text)
 			urlResponse = urllib.urlopen(currentURL).read()
@@ -78,14 +81,14 @@ else:
 				if imageLink != None:
 					fileExt = imageLink.split('.')[-1]
 					if fileExt == "jpg" or fileExt == "png" or fileExt == "gif":
-						if not pageName in imageLink:
-							if imageLink[0] == '/':
-								if imageLink[1] == '/':
-									imageLink = "http:" + imageLink
-								else:
-									imageLink = "http://" + pageName + imageLink
+						
+						if imageLink[0] == '/':
+							if imageLink[1] == '/':
+								imageLink = "http:" + imageLink
 							else:
-								imageLink = "http://" + pageName + '/' + imageLink
+								imageLink = "http://" + pageName + imageLink
+						elif not pageName in imageLink:
+							imageLink = "http://" + pageName + '/' + imageLink
 						filename = imageLink.split('/')[-1]
 						path = os.path.join(pageDir, filename)
 						if fileExt == "gif":
