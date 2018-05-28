@@ -2,9 +2,9 @@
 A program to download images from a website with regular numeric subpages, ie. xkcd.com
 
 # List of supported websites #
-(these are only websites that script is confirmed to work correctly on)  
+(this is not an exhaustive list, just those that are confirmed)
 -xkcd.com  
--kuvaton.com (won't stop downloading)  
+-kuvaton.com
 -doodleforfood.com  
 -drmcninja.com  
 -gunnerkrigg.com  
