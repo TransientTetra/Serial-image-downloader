@@ -24,7 +24,7 @@ elif (sys.argv[1] == "-v" or sys.argv[1] == "--version"):
 	text = "Webcomic downloader version 0.4b; This piece of software was written by msperkowski it cannot be run, published, used, compiled, interpreted, edited, copied or shared in any form without owner's permission.\nFor more look at msperkowski@github.com"
 	print text
 else:
-	if (sys.argv[1] == "-d" or sys.argv[1] == "--dir" or sys.argv[1] == "directory"):
+	if (sys.argv[1] == "-d" or sys.argv[1] == "--dir" or sys.argv[1] == "--directory"):
 		dir = sys.argv[2]
 		if not os.path.exists(dir):
 			print ("Specified directory doesn't exist. Quitting")
@@ -89,7 +89,6 @@ else:
 								imageLink = "http://" + pageName + imageLink
 						elif not pageName in imageLink:
 							imageLink = "http://" + pageName + '/' + imageLink
-						print imageLink
 						filename = imageLink.split('/')[-1]
 						path = os.path.join(pageDir, filename)
 						if fileExt == "gif":
